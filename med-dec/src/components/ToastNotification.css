@@ -1,0 +1,117 @@
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+}
+
+.toast-notification {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-left: 4px solid #007bff;
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.toast-notification.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast-notification.hide {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.toast-icon {
+  color: #007bff;
+  font-size: 1.2rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.toast-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-title {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.toast-message {
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.toast-close:hover {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+/* Different colors for different notification types */
+.toast-notification[data-type="order-placed"] {
+  border-left-color: #28a745;
+}
+
+.toast-notification[data-type="pharmacy-response"] {
+  border-left-color: #ffc107;
+}
+
+.toast-notification[data-type="logistics-assigned"] {
+  border-left-color: #17a2b8;
+}
+
+.toast-notification[data-type="delivery-update"] {
+  border-left-color: #6f42c1;
+}
+
+.toast-notification[data-type="delivery-completed"] {
+  border-left-color: #e83e8c;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .toast-container {
+    left: 10px;
+    right: 10px;
+    top: 10px;
+    max-width: none;
+  }
+
+  .toast-notification {
+    padding: 12px;
+  }
+}

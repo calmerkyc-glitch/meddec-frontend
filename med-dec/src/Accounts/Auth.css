@@ -1,0 +1,265 @@
+/* Auth Container & Layout */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f0f6ff 0%, #e8f2ff 50%, #f0f8ff 100%);
+  padding: 2rem 1rem;
+}
+
+.auth-wrapper {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Auth Header */
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.auth-logo-icon {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.auth-brand-name {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #0c4a7a;
+  letter-spacing: -0.02em;
+}
+
+.auth-title {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #102c4b;
+  margin: 0;
+}
+
+.auth-subtitle {
+  font-size: 0.95rem;
+  color: #6b7f98;
+  margin: 0.5rem 0 0;
+}
+
+/* Auth Card */
+.auth-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 2.2rem;
+  box-shadow: 0 40px 90px rgba(15, 61, 125, 0.08);
+  border: 1px solid rgba(13, 110, 253, 0.08);
+}
+
+/* Auth Form */
+.auth-form {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f5f9ff;
+  border: 1px solid #d9e5ef;
+  border-radius: 16px;
+  padding: 0 1rem;
+  height: 50px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-group:focus-within {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+.input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 0.75rem;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.input-group input {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  color: #1f3d5f;
+  outline: none;
+  padding: 0;
+}
+
+.input-group input::placeholder {
+  color: #8fa9c4;
+}
+
+/* Checkbox */
+.auth-checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  color: #556c87;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-top: 0.5rem;
+}
+
+.auth-checkbox-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  cursor: pointer;
+  accent-color: #0d6efd;
+  flex-shrink: 0;
+}
+
+.auth-checkbox-row a {
+  color: #0d6efd;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.auth-checkbox-row a:hover {
+  color: #0a5bc9;
+  text-decoration: underline;
+}
+
+/* Submit Button */
+.auth-submit {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg, #0d6efd 0%, #0a5bc9 100%);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.auth-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 50px rgba(13, 110, 253, 0.2);
+}
+
+.auth-submit:active {
+  transform: translateY(0);
+}
+
+/* Footer / Links */
+.auth-footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #556c87;
+}
+
+.auth-footer p {
+  margin: 0.75rem 0;
+}
+
+.auth-footer a {
+  color: #0d6efd;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.auth-footer a:hover {
+  color: #0a5bc9;
+  text-decoration: underline;
+}
+
+.auth-success,
+.auth-error {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  border-radius: 16px;
+  padding: 1rem 1rem;
+}
+
+.auth-success {
+  background: #e6f4ea;
+  color: #0f5132;
+  border: 1px solid #d1e7dd;
+}
+
+.auth-error {
+  background: #f8d7da;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}
+
+.auth-divider {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #8fa9c4;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: calc(50% - 2rem);
+  height: 1px;
+  background: #d9e5ef;
+}
+
+.auth-divider::before {
+  left: 0;
+}
+
+.auth-divider::after {
+  right: 0;
+}
+
+/* Responsive */
+@media (max-width: 560px) {
+  .auth-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .auth-wrapper {
+    max-width: 100%;
+  }
+
+  .auth-card {
+    padding: 1.75rem;
+    border-radius: 24px;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+  }
+
+  .auth-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .input-group {
+    height: 46px;
+  }
+}

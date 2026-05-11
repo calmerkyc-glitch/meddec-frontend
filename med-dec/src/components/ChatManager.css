@@ -1,0 +1,44 @@
+.chat-manager {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.chat-widget-container {
+  position: absolute;
+  bottom: 20px;
+  pointer-events: auto;
+}
+
+/* Ensure chat widgets don't interfere with each other */
+.chat-widget-container:nth-child(2) .chat-widget {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.chat-widget-container:nth-child(3) .chat-widget {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.chat-widget-container:nth-child(4) .chat-widget {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .chat-manager {
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .chat-widget-container {
+    position: static;
+    margin: 10px;
+  }
+
+  .chat-widget-container:not(:first-child) {
+    display: none; /* Only show one chat on mobile */
+  }
+}
