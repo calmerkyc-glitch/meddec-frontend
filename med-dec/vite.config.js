@@ -6,5 +6,5 @@ export default defineConfig({
   build: {
     cssMinify: false,
   },
-  base: './',   // 👈 add this line
+  base: '/',   // ✅ correct setting for Vercel
 })
