@@ -19,12 +19,25 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage("");
     try {
       const response = await backendFetch('/api/auth/signup', {
         method: "POST",
         body: JSON.stringify(formData),
       });
-      const data = await response.json();
+      
+      if (!response) {
+        throw new Error("No response from server");
+      }
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error("Failed to parse response JSON:", jsonError, response);
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+      }
+
       if (response.ok) {
         setSuccessMessage("Signup successful! Please sign in to continue.");
         setErrorMessage("");
@@ -34,7 +47,7 @@ function Signup() {
       setErrorMessage(data.error || "Signup failed");
     } catch (err) {
       console.error("Signup error:", err);
-      setErrorMessage("Something went wrong. Please try again.");
+      setErrorMessage(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

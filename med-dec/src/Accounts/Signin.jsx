@@ -27,7 +27,18 @@ function Signin() {
         method: "POST",
         body: JSON.stringify(formData),
       });
-      const data = await response.json();
+
+      if (!response) {
+        throw new Error("No response from server");
+      }
+
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error("Failed to parse response JSON:", jsonError, response);
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+      }
 
       if (response.ok) {
         login(data.token, data.user || { email: formData.email });
@@ -52,7 +63,7 @@ function Signin() {
       setErrorMessage(data.error || "Signin failed");
     } catch (err) {
       console.error("Signin error:", err);
-      setErrorMessage("Something went wrong. Please try again.");
+      setErrorMessage(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
