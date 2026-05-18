@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { useSocket } from '../context/SocketContext';
+import { useAuth } from '../context/AuthContext';
 import { backendFetch } from '../utils/api';
 import soundService from '../utils/soundService';
 import './NotificationBell.css';
 
 const NotificationBell = () => {
   const { notifications, markAsRead, markAllAsRead, clearNotifications } = useSocket();
+  const { token } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(soundService.getMuted());
   const [volume, setVolume] = useState(soundService.getVolume());
+  const [respondingTo, setRespondingTo] = useState(null);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -21,6 +24,39 @@ const NotificationBell = () => {
     const newVolume = parseFloat(e.target.value);
     soundService.setVolume(newVolume);
     setVolume(newVolume);
+  };
+
+  const handleCallResponse = async (notification, response) => {
+    if (!notification.requesterId) {
+      console.error('[NotificationBell] Cannot respond: requesterID not found');
+      return;
+    }
+
+    setRespondingTo(notification.id);
+    try {
+      console.log('[NotificationBell] Sending call response:', response);
+      const result = await backendFetch('/api/chat/call-response', {
+        token,
+        method: 'POST',
+        body: JSON.stringify({
+          orderId: notification.orderId,
+          requesterId: notification.requesterId,
+          response
+        })
+      });
+      const data = await result.json();
+      if (!result.ok) {
+        console.error('[NotificationBell] Call response failed:', data);
+        alert('Failed to respond to call');
+        return;
+      }
+      markAsRead(notification.id);
+    } catch (error) {
+      console.error('[NotificationBell] Error:', error);
+      alert('Error responding to call');
+    } finally {
+      setRespondingTo(null);
+    }
   };
 
   const handleNotificationClick = async (notification) => {
@@ -134,6 +170,30 @@ const NotificationBell = () => {
                     <div className="notification-title">{notification.title}</div>
                     <div className="notification-message">{notification.message}</div>
                     <div className="notification-time">{formatTime(notification.timestamp)}</div>
+                    {notification.type === 'call_request' && (
+                      <div className="call-actions">
+                        <button
+                          className="call-accept-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCallResponse(notification, 'accepted');
+                          }}
+                          disabled={respondingTo === notification.id}
+                        >
+                          {respondingTo === notification.id ? 'Processing...' : '✓ Accept'}
+                        </button>
+                        <button
+                          className="call-decline-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCallResponse(notification, 'declined');
+                          }}
+                          disabled={respondingTo === notification.id}
+                        >
+                          {respondingTo === notification.id ? 'Processing...' : '✕ Decline'}
+                        </button>
+                      </div>
+                    )}
                   </div>
                   {!notification.read && <div className="unread-indicator"></div>}
                 </div>

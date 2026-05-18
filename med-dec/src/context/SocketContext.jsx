@@ -184,6 +184,24 @@ export const SocketProvider = ({ children }) => {
           title: 'Call Request',
           message: `${data.requesterName} wants a ${data.targetRole === 'logistics' ? 'rider' : 'pharmacy'} callback for order ${data.orderId}`,
           orderId: data.orderId,
+          requesterId: data.requesterId,
+          requesterName: data.requesterName,
+          targetRole: data.targetRole,
+          timestamp: new Date(),
+          read: false
+        });
+      });
+
+      newSocket.on('call_response', (data) => {
+        soundService.play('notification');
+        addNotification({
+          id: Date.now(),
+          type: 'call_response',
+          title: data.title,
+          message: data.message,
+          orderId: data.orderId,
+          responderName: data.responderName,
+          response: data.response,
           timestamp: new Date(),
           read: false
         });
