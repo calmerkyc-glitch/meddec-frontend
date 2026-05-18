@@ -24,6 +24,16 @@ const ChatWidget = ({ chatId, orderId, onClose, isMinimized, onToggleMinimize })
 
   useEffect(() => {
     if (chatId && socket) {
+      if (!socket.connected) {
+        console.warn('[ChatWidget] Socket not connected, attempting to reconnect');
+        // Try to reconnect
+        if (socket.disconnected) {
+          socket.connect();
+        }
+        return;
+      }
+
+      console.log('[ChatWidget] Socket connected, joining chat:', chatId);
       // Join chat room
       socket.emit('join-chat', chatId);
 
@@ -32,6 +42,7 @@ const ChatWidget = ({ chatId, orderId, onClose, isMinimized, onToggleMinimize })
 
       // Listen for new messages
       socket.on('new-message', (data) => {
+        console.log('[ChatWidget] New message received:', data.message);
         if (data.chatId === chatId) {
           setMessages(prev => [...prev, data.message]);
         }
@@ -92,6 +103,12 @@ const ChatWidget = ({ chatId, orderId, onClose, isMinimized, onToggleMinimize })
     e.preventDefault();
     if (!newMessage.trim()) return;
 
+    if (!socket || !socket.connected) {
+      console.error('[ChatWidget] Socket not connected, cannot send message');
+      alert('Connection lost. Please refresh the page.');
+      return;
+    }
+
     try {
       const response = await backendFetch(`/api/chat/chats/${chatId}/messages`, {
         method: 'POST',
@@ -102,11 +119,17 @@ const ChatWidget = ({ chatId, orderId, onClose, isMinimized, onToggleMinimize })
       });
 
       if (response.ok) {
+        console.log('[ChatWidget] Message sent successfully');
         setNewMessage('');
         stopTyping();
+      } else {
+        const error = await response.json();
+        console.error('[ChatWidget] Failed to send message:', error);
+        alert('Failed to send message: ' + (error.error || 'Unknown error'));
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('[ChatWidget] Error sending message:', error);
+      alert('Error sending message: ' + error.message);
     }
   };
 

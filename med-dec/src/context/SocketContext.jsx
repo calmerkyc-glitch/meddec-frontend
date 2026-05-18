@@ -5,6 +5,11 @@ import soundService from '../utils/soundService';
 
 const SocketContext = createContext();
 
+// Get backend URL from environment or default
+const getBackendURL = () => {
+  return import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+};
+
 export const useSocket = () => {
   const context = useContext(SocketContext);
   if (!context) {
@@ -17,39 +22,61 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
+  const [connectionError, setConnectionError] = useState(null);
   const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isAuthenticated && user) {
       // Connect to Socket.IO server
-      const newSocket = io('http://localhost:5000', {
+      const backendURL = getBackendURL();
+      console.log('[Socket.io] Connecting to:', backendURL);
+      
+      const newSocket = io(backendURL, {
         auth: {
           token: localStorage.getItem('token')
-        }
+        },
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        reconnectionAttempts: 5,
+        transports: ['websocket', 'polling']
       });
 
       // Connection events
       newSocket.on('connect', () => {
-        console.log('Connected to server');
+        console.log('[Socket.io] Connected successfully');
         setIsConnected(true);
+        setConnectionError(null);
 
         // Join user-specific room
         newSocket.emit('join-user-room', user._id);
+        console.log('[Socket.io] Joined user room:', user._id);
 
         // Join role-specific room
         newSocket.emit('join-role-room', user.role);
+        console.log('[Socket.io] Joined role room:', user.role);
 
         // Subscribe to order updates if user has active orders
         if (user.role === 'patient' && user.activeOrders) {
           user.activeOrders.forEach(orderId => {
             newSocket.emit('subscribe-order', orderId);
+            console.log('[Socket.io] Subscribed to order:', orderId);
           });
         }
       });
 
-      newSocket.on('disconnect', () => {
-        console.log('Disconnected from server');
+      newSocket.on('disconnect', (reason) => {
+        console.log('[Socket.io] Disconnected:', reason);
         setIsConnected(false);
+      });
+
+      newSocket.on('connect_error', (error) => {
+        console.error('[Socket.io] Connection error:', error);
+        setConnectionError(error.message || 'Failed to connect to server');
+      });
+
+      newSocket.on('error', (error) => {
+        console.error('[Socket.io] Socket error:', error);
       });
 
       // Notification events
@@ -206,6 +233,7 @@ export const SocketProvider = ({ children }) => {
     socket,
     notifications,
     isConnected,
+    connectionError,
     addNotification,
     markAsRead,
     markAllAsRead,

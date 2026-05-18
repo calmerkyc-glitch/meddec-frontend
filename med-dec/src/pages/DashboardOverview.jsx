@@ -19,6 +19,8 @@ export default function DashboardOverview() {
     setActionLoading(true);
     setMessage('');
     try {
+      console.log('[DashboardOverview] Requesting refill for:', medicine);
+      
       const response = await backendFetch('/api/dashboard/refill-request', {
         token,
         method: 'POST',
@@ -26,8 +28,11 @@ export default function DashboardOverview() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Unable to submit refill');
+      
+      console.log('[DashboardOverview] Refill request submitted successfully');
       setMessage('Refill request submitted successfully.');
     } catch (err) {
+      console.error('[DashboardOverview] Error requesting refill:', err);
       setMessage(err.message || 'Failed to request refill.');
     } finally {
       setActionLoading(false);
@@ -43,16 +48,26 @@ export default function DashboardOverview() {
         throw new Error('No active order available for call request');
       }
 
+      console.log('[DashboardOverview] Requesting call to:', target, 'for order:', orderId);
+
       const response = await backendFetch(`/api/chat/orders/${orderId}/request-call`, {
         token,
         method: 'POST',
         body: JSON.stringify({ target })
       });
+      
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Unable to request call');
-      setMessage(`Call request sent to ${data.target}.`);
+      
+      if (!response.ok) {
+        console.error('[DashboardOverview] Call request failed:', data);
+        throw new Error(data.error || 'Unable to request call');
+      }
+      
+      console.log('[DashboardOverview] Call request sent successfully');
+      setMessage(`Call request sent to ${data.target}. They will call you shortly.`);
     } catch (err) {
-      setMessage(err.message || 'Failed to request call.');
+      console.error('[DashboardOverview] Error requesting call:', err);
+      setMessage(err.message || 'Failed to request call. Please try again.');
     } finally {
       setCallLoading(false);
     }
