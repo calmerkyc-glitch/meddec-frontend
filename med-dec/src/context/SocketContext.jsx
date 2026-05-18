@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 import soundService from '../utils/soundService';
 
+// @refresh reset
 const SocketContext = createContext();
 
 // Get backend URL from environment or default
